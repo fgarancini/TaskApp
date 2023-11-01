@@ -15,5 +15,13 @@ namespace TaskApp.Models
 
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; }
+        public TaskItem()
+        {
+            CreatedAt = DateTime.UtcNow; 
+            UpdatedAt = DateTime.UtcNow;
+        }
+
     }
+
+    
 }

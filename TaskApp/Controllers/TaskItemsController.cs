@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -22,23 +23,77 @@ namespace TaskApp.Controllers
 
         // GET: api/TaskItems
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskItem>>> GetTaskItems()
+        public async Task<ActionResult<IEnumerable<TaskItem>>> GetTaskItems(
+            string? filterDate = null,
+            bool? filterCompleted = false,
+            string? filterMonth = null,
+            string? orderBy = "asc"
+            )
         {
-          if (_context.TaskItems == null)
-          {
-              return NotFound();
-          }
-            return await _context.TaskItems.ToListAsync();
-        }
+            IQueryable<TaskItem> query = _context.TaskItems;
+            
+            if (!string.IsNullOrEmpty(filterDate))
+            {
+                if (DateTime.TryParse(filterDate, out var parsedFilterDate))
+                {
+                    query = query.Where(task => task.Deadline.Date == parsedFilterDate.Date);
+                }
+                else
+                {
+                    return BadRequest("Invalid 'filterDate' format. Use a valid date format.");
+                }
+            }
 
+            if (filterCompleted.HasValue && filterCompleted.Value)
+            {
+                query = query.Where(task => task.Completed);
+            }
+
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                if (orderBy.Equals("desc", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = query.OrderByDescending(task => task.Deadline);
+                }
+                else
+                {
+                    query = query.OrderBy(task => task.Deadline);
+                }
+            }
+
+
+            if (!string.IsNullOrEmpty(filterMonth))
+            {
+                if (DateTime.TryParseExact(filterMonth, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+                {
+                    var year = parsedDate.Year;
+                    var month = parsedDate.Month;
+
+                    query = query.Where(task => task.Deadline.Year == year && task.Deadline.Month == month);
+                }
+                else
+                {
+                    return BadRequest("Invalid 'filterMonth' format. Use 'YYYY-MM' format.");
+                }
+            }
+
+            var taskItems = await query.ToListAsync();
+
+            if (taskItems.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return taskItems;
+        }
         // GET: api/TaskItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TaskItem>> GetTaskItem(int id)
         {
-          if (_context.TaskItems == null)
-          {
-              return NotFound();
-          }
+            if (_context.TaskItems == null)
+            {
+                return NotFound();
+            }
             var taskItem = await _context.TaskItems.FindAsync(id);
 
             if (taskItem == null)
@@ -85,10 +140,10 @@ namespace TaskApp.Controllers
         [HttpPost]
         public async Task<ActionResult<TaskItem>> PostTaskItem(TaskItem taskItem)
         {
-          if (_context.TaskItems == null)
-          {
-              return Problem("Entity set 'TaskContext.TaskItems'  is null.");
-          }
+            if (_context.TaskItems == null)
+            {
+                return Problem("Entity set 'TaskContext.TaskItems'  is null.");
+            }
             _context.TaskItems.Add(taskItem);
             await _context.SaveChangesAsync();
 
