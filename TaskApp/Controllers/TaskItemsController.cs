@@ -25,7 +25,7 @@ namespace TaskApp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTaskItems(
             string? filterDate = null,
-            bool? filterCompleted = false,
+            bool? filterCompleted = null,
             string? filterMonth = null,
             string? orderBy = "asc"
             )
@@ -44,9 +44,9 @@ namespace TaskApp.Controllers
                 }
             }
 
-            if (filterCompleted.HasValue && filterCompleted.Value)
+            if (filterCompleted.HasValue)
             {
-                query = query.Where(task => task.Completed);
+                query = query.Where(task => task.Completed == filterCompleted.Value);
             }
 
             if (!string.IsNullOrEmpty(orderBy))
@@ -148,6 +148,27 @@ namespace TaskApp.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetTaskItem", new { id = taskItem.Id }, taskItem);
+        }
+
+        // POST: api/TaskItems/toggle/5
+        [HttpPost("toggle/{id}")]
+        public async Task<ActionResult<TaskItem>> ToggleCompletedTask(int id)
+        {
+            if (_context.TaskItems == null)
+            {
+                return Problem("Entity set 'TaskContext.TaskItems'  is null.");
+            }
+            var taskItem = await _context.TaskItems.FindAsync(id);
+            
+            if (taskItem == null)
+            {
+                return Problem("Task not found");
+            }
+            taskItem.Completed = !taskItem.Completed;
+
+            await _context.SaveChangesAsync();
+
+            return taskItem;
         }
 
         // DELETE: api/TaskItems/5

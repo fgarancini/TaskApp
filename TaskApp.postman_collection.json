@@ -1,0 +1,157 @@
+{
+	"info": {
+		"_postman_id": "b9c9f052-40b1-4f8d-b87a-e6411a4779cc",
+		"name": "TaskApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create task",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Pedir Pizza\",\r\n    \"completed\": true,\r\n    \"deadline\": \"2023-11-04T20:40:00\",\r\n    \"description\": \"En ugis\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local_api}}/taskitems",
+					"host": [
+						"{{local_api}}"
+					],
+					"path": [
+						"taskitems"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tasks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{local_api}}/taskitems",
+					"host": [
+						"{{local_api}}"
+					],
+					"path": [
+						"taskitems"
+					],
+					"query": [
+						{
+							"key": "order",
+							"value": "asc",
+							"description": "asc | desc",
+							"disabled": true
+						},
+						{
+							"key": "filterCompleted",
+							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "filterMonth",
+							"value": "2023-11",
+							"disabled": true
+						},
+						{
+							"key": "filterDate",
+							"value": "2023-11-04",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Task",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{local_api}}/taskitems/1",
+					"host": [
+						"{{local_api}}"
+					],
+					"path": [
+						"taskitems",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Toggle Completed",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{local_api}}/TaskItems/toggle/4",
+					"host": [
+						"{{local_api}}"
+					],
+					"path": [
+						"TaskItems",
+						"toggle",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit task",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":4,\r\n    \"name\":\"Ver el partido de bokita\",\r\n    \"description\":\"Del partido a el mc de la 9 de julio\",\r\n    \"deadline\":\"2023-11-04\",\r\n    \"created_at\": \"2023-11-01 03:08:50\",\r\n    \"updated_at\": \"2023-11-01 03:08:50\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local_api}}/TaskItems/4",
+					"host": [
+						"{{local_api}}"
+					],
+					"path": [
+						"TaskItems",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get single task",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{local_api}}/TaskItems/4",
+					"host": [
+						"{{local_api}}"
+					],
+					"path": [
+						"TaskItems",
+						"4"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

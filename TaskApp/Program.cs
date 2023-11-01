@@ -12,6 +12,7 @@ builder.Services.AddDbContext<TaskContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 26)));
 });
 
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
